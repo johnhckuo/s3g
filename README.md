@@ -60,7 +60,7 @@ To run the unit tests, you will need the following modules:
 Import both the makerbot_driver module and pyserial:
 
 ```python
-import makerbot_driver, serial
+import makerbot_driver, serial, threading
 ```
 
 Create an makerbot_driver object, and attach it to a serial port:
@@ -68,7 +68,7 @@ Create an makerbot_driver object, and attach it to a serial port:
 ```python
 r = makerbot_driver.s3g()
 file = serial.Serial(port, 115200, timeout=1)
-r.writer = makerbot_driver.Writer.StreamWriter(file)
+r.writer = makerbot_driver.Writer.StreamWriter(file, threading.Condition())
 ```
 
 _Note: Replace port with your serial port (example: '/dev/tty.usbmodemfd121')_
@@ -84,10 +84,10 @@ r.recall_home_positions(['x', 'y', 'z', 'a', 'b'])
 Instruct the machine to move in a square pattern:
 
 ```python
-r.queue_extended_point([2000,0,5000,0,0], 400)
-r.queue_extended_point([2000,2000,5000,0,0], 400)
-r.queue_extended_point([0,2000,5000,0,0], 400)
-r.queue_extended_point([0,0,5000,0,0], 400)
+r.queue_extended_point([2000,0,5000,0,0], 400, 0, 0)
+r.queue_extended_point([2000,2000,5000,0,0], 400, 0, 0)
+r.queue_extended_point([0,2000,5000,0,0], 400, 0, 0)
+r.queue_extended_point([0,0,5000,0,0], 400, 0, 0)
 ```
 
 _Note: All points are in steps, and all speeds are in DDA. This is s3g, not gcode!_
@@ -97,7 +97,7 @@ Now, instruct the machine to heat toolhead 0, wait up to 5 minutes for it to rea
 ```python
 r.set_toolhead_temperature(0, 220)
 r.wait_for_tool_ready(0,100,5*60)
-r.queue_extended_point([0,0,5000,-5000,0], 2500)
+r.queue_extended_point([0,0,5000,-5000,0], 2500, 0, 0)
 ```
 
 Finally, don't forget to turn off the toolhead heater, and disable the stepper motors:
