@@ -24,6 +24,11 @@ To configure the VirtualEnv, navigate to the root directory of the makerbot_driv
 To activate the VirtualEnv, in the root directory of the makerbot_driver driver, issue:
 
     . virtualenv/bin/activate
+    
+Test whether you can actually import the makerbot_driver module in a pyhton shell.
+If it does not succeed enter the pyserial subfolder and install the module:
+
+    python setup.py install
 
 ##AVRDude
 
